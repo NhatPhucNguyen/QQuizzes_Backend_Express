@@ -3,6 +3,7 @@ import express from "express";
 import "dotenv/config";
 import morgan from "morgan";
 import mongoose from "mongoose";
+import authRouter from "./routes/auth";
 const app: Express = express();
 const PORT = process.env.PORT || 5000;
 const mongoString =
@@ -17,6 +18,7 @@ database.once("connected", () => {
 });
 app.use(morgan("tiny"));
 app.use(express.json());
+app.use("/auth",authRouter)
 app.get("/", (req, res) => {
     res.sendStatus(200);
 });
