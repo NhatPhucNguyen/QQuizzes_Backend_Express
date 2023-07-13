@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { IUser } from "../interfaces/db_interfaces";
 import User from "../models/user";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload, Secret, decode } from "jsonwebtoken";
 
 export const handleRegister = async (req: Request, res: Response) => {
     const newUser = req.body as IUser;
@@ -64,7 +64,7 @@ export const handleLogin = async (req: Request, res: Response) => {
             {
                 userId: foundUser._id,
             },
-            process.env.ACCESS_TOKEN_SECRET || "",
+            process.env.ACCESS_TOKEN_SECRET as Secret,
             { expiresIn: process.env.DEV_EXPIRE || "15m" }
         );
         //generate refresh token to save in database
@@ -72,7 +72,7 @@ export const handleLogin = async (req: Request, res: Response) => {
             {
                 userId: foundUser._id,
             },
-            process.env.REFRESH_TOKEN_SECRET || "",
+            process.env.REFRESH_TOKEN_SECRET as Secret,
             { expiresIn: "1d" }
         );
         try {
@@ -85,7 +85,7 @@ export const handleLogin = async (req: Request, res: Response) => {
                 maxAge: 24 * 60 * 60 * 1000,
                 sameSite: "none",
                 secure: true,
-            }); 
+            });
             return res.status(200).json({
                 accessToken,
             });
@@ -95,5 +95,53 @@ export const handleLogin = async (req: Request, res: Response) => {
                 message: "Something went wrong.",
             });
         }
+    }
+};
+export const handleRefreshToken = async (req: Request, res: Response) => {
+    const cookies: { jwt: string } = req.cookies;
+    //checking cookies exist
+    if (!cookies.jwt) {
+        return res.status(401).json({
+            message: "Unauthenticated.",
+        });
+    }
+    const refreshToken = cookies.jwt;
+    try {
+        const foundUser = await User.findOne({ refreshToken: refreshToken });
+        if (!foundUser) {
+            return res.status(403).json({
+                message: "No permission to refresh token.",
+            });
+        }
+        jwt.verify(
+            refreshToken,
+            process.env.REFRESH_TOKEN_SECRET as Secret,
+            (err, decoded) => {
+                //decoding the token
+                const { userId } = decoded as { userId: string };
+                //check if it matches
+                if (err || userId !== foundUser._id.toString()) {
+                    return res.status(403).json({
+                        message: "No permission to refresh token.",
+                    });
+                }
+                //re-generate a token
+                const accessToken = jwt.sign(
+                    {
+                        userId: userId,
+                    },
+                    process.env.ACCESS_TOKEN_SECRET as Secret,
+                    { expiresIn: process.env.DEV_EXPIRE || "15m" }
+                );
+                return res.status(200).json({
+                    accessToken,
+                });
+            }
+        );
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+        });
     }
 };

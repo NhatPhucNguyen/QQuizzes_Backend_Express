@@ -10,7 +10,7 @@ const app: Express = express();
 const PORT = process.env.PORT || 5000;
 //connect to mongodb
 const mongoString =
-    process.env.DATABASE_URI || "mongodb://127.0.0.1:27017/QQuizzes";
+    process.env.DATABASE_URI as string;
 mongoose.connect(mongoString);
 const database = mongoose.connection;
 database.on("error", (err) => {
