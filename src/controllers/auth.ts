@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { IUser } from "../interfaces/db_interfaces";
 import User from "../models/user";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 export const handleRegister = async (req: Request, res: Response) => {
     const newUser = req.body as IUser;
     if (!newUser.username || !newUser.password || !newUser.email) {
@@ -19,8 +20,8 @@ export const handleRegister = async (req: Request, res: Response) => {
                 message: "User already existed.",
             });
         }
-        const hashedPassword = bcrypt.hash(newUser.password, 10);
-        const userToAdd = new User(newUser);
+        const hashedPassword = await bcrypt.hash(newUser.password, 10);
+        const userToAdd = new User({ ...newUser, password: hashedPassword });
         await userToAdd.save();
         return res.status(200).json({
             message: "User was created successfully.",
@@ -30,5 +31,62 @@ export const handleRegister = async (req: Request, res: Response) => {
         res.status(500).json({
             message: "Something went wrong.",
         });
+    }
+};
+export const handleLogin = async (req: Request, res: Response) => {
+    const { username, password } = req.body as {
+        username: string;
+        password: string;
+    };
+    if (!username || !password) {
+        return res.status(400).json({
+            message: "Missing required fields.",
+        });
+    }
+    const foundUser = await User.findOne({ username: username });
+    if (!foundUser) {
+        return res.status(404).json({
+            message: "User does not exist.",
+        });
+    }
+    const isMatch = await bcrypt.compare(password, foundUser.password);
+    if (!isMatch) {
+        return res.status(404).json({
+            message: "Password is incorrect.",
+        });
+    } else {
+        const accessToken = jwt.sign(
+            {
+                userId: foundUser._id,
+            },
+            process.env.ACCESS_TOKEN_SECRET || "",
+            { expiresIn: process.env.DEV_EXPIRE || "15m" }
+        );
+        const refreshToken = jwt.sign(
+            {
+                userId: foundUser._id,
+            },
+            process.env.REFRESH_TOKEN_SECRET || "",
+            { expiresIn: "1d" }
+        );
+        try {
+            await User.findByIdAndUpdate(foundUser._id, {
+                refreshToken: refreshToken,
+            });
+            res.cookie("jwt", refreshToken, {
+                httpOnly: true,
+                maxAge: 24 * 60 * 60 * 1000,
+                sameSite: "none",
+                secure: true,
+            });
+            return res.status(200).json({
+                accessToken,
+            });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json({
+                message: "Something went wrong.",
+            });
+        }
     }
 };

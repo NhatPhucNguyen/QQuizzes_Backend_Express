@@ -5,4 +5,5 @@ authRouter.get("/", (req, res) => {
     res.sendStatus(200);
 });
 authRouter.post("/register", authControllers.handleRegister);
+authRouter.post("/login", authControllers.handleLogin);
 export default authRouter;
