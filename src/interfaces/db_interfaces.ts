@@ -7,4 +7,5 @@ export interface IUser {
     educationInstitution?: string;
     job?: string;
     role: string;
+    refreshToken?: string;
 }

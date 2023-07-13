@@ -21,9 +21,13 @@ const userSchema = new mongoose.Schema<IUser>(
             type: "String",
             required: true,
         },
-        job: {
+        purpose: {
             type: "String",
             required: true,
+            default: "Personal",
+        },
+        job: {
+            type: "String",
         },
         educationInstitution: {
             type: "String",
@@ -32,6 +36,10 @@ const userSchema = new mongoose.Schema<IUser>(
             type: "String",
             required: true,
             default: "user",
+        },
+        refreshToken: {
+            type: "String",
+            expires: 60 * 60 * 24,
         },
     },
     {

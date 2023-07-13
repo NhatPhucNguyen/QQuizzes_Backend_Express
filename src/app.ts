@@ -1,4 +1,4 @@
-import { Express } from "express";
+import { Express, urlencoded } from "express";
 import express from "express";
 import "dotenv/config";
 import morgan from "morgan";
@@ -18,7 +18,8 @@ database.once("connected", () => {
 });
 app.use(morgan("tiny"));
 app.use(express.json());
-app.use("/auth",authRouter)
+app.use(express.urlencoded({ extended: false }));
+app.use("/auth", authRouter);
 app.get("/", (req, res) => {
     res.sendStatus(200);
 });
