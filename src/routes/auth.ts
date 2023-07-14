@@ -7,4 +7,5 @@ authRouter.get("/", (req, res) => {
 authRouter.post("/register", authControllers.handleRegister);
 authRouter.post("/login", authControllers.handleLogin);
 authRouter.get("/refreshToken", authControllers.handleRefreshToken);
+authRouter.get("/logout", authControllers.handleLogout);
 export default authRouter;

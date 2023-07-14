@@ -119,7 +119,7 @@ export const handleRefreshToken = async (req: Request, res: Response) => {
             (err, decoded) => {
                 //decoding the token
                 const { userId } = decoded as { userId: string };
-                //check if it matches
+                //check if userId matches or errors happen
                 if (err || userId !== foundUser._id.toString()) {
                     return res.status(403).json({
                         message: "No permission to refresh token.",
@@ -140,6 +140,33 @@ export const handleRefreshToken = async (req: Request, res: Response) => {
         );
     } catch (error) {
         console.log(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+        });
+    }
+};
+export const handleLogout = async (req: Request, res: Response) => {
+    const cookies: { jwt: string } = req.cookies;
+    //checking cookies exist
+    if (!cookies.jwt) {
+        return res.status(401).json({
+            message: "Unauthenticated.",
+        });
+    }
+    const refreshToken = cookies.jwt;
+    try {
+        const foundUser = await User.findOne({ refreshToken: refreshToken });
+        if (!foundUser) {
+            res.clearCookie("jwt", { httpOnly: true }); //clear cookies when user not exist in database
+            return res.status(403).json({
+                message: "No permission.",
+            });
+        }
+        await User.findByIdAndUpdate(foundUser._id, { refreshToken: "" });
+        res.clearCookie("jwt", { httpOnly: true });
+        return res.sendStatus(204);
+    } catch (err) {
+        console.log(err);
         return res.status(500).json({
             message: "Something went wrong.",
         });
