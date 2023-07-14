@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { IUser } from "../interfaces/db_interfaces";
 import User from "../models/user";
 import bcrypt from "bcrypt";
-import jwt, { Secret} from "jsonwebtoken";
+import jwt, { Secret } from "jsonwebtoken";
 
 export const handleRegister = async (req: Request, res: Response) => {
     const newUser = req.body as IUser;
@@ -13,15 +13,22 @@ export const handleRegister = async (req: Request, res: Response) => {
         });
     }
     try {
-        //make sure user does not exist
+        //make sure user and email does not exist
         const duplicatedUser = await User.findOne({
-            username: newUser.username,
-            email: newUser.email,
+            $or: [{ username: newUser.username }, { email: newUser.email }],
         });
+        console.log(duplicatedUser);
         if (duplicatedUser) {
-            return res.status(409).json({
-                message: "User already existed.",
-            });
+            if (duplicatedUser.username === newUser.username) {
+                return res.status(409).json({
+                    message: "User already existed.",
+                });
+            }
+            if (duplicatedUser.email === newUser.email) {
+                return res.status(409).json({
+                    message: "Email was already in use.",
+                });
+            }
         }
         const hashedPassword = await bcrypt.hash(newUser.password, 10);
         const userToAdd = new User({ ...newUser, password: hashedPassword });

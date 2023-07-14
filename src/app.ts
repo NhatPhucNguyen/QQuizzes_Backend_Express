@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth";
 import verifyJWT from "./middleware/verifyJWT";
+import cors from "cors";
 const app: Express = express();
 //PORT config
 const PORT = process.env.PORT || 5000;
@@ -24,12 +25,20 @@ app.use(morgan("tiny"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(
+    cors({
+        origin: ["http://localhost:5000", "http://localhost:5173"],
+        credentials: true,
+    })
+);
 //routers setup
 app.use("/auth", authRouter);
 app.get("/quizzes", verifyJWT, (req, res) => {
     res.sendStatus(200);
 });
-
+app.get("/", (req, res) => {
+    res.redirect("https://github.com/NhatPhucNguyen/QQuizzes_Backend_Express");
+});
 //response errors other routes
 app.get("*", (req, res) => {
     res.sendStatus(404);
