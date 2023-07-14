@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { IUser } from "../interfaces/db_interfaces";
 import User from "../models/user";
 import bcrypt from "bcrypt";
-import jwt, { JwtPayload, Secret, decode } from "jsonwebtoken";
+import jwt, { Secret} from "jsonwebtoken";
 
 export const handleRegister = async (req: Request, res: Response) => {
     const newUser = req.body as IUser;
