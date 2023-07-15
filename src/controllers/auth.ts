@@ -17,7 +17,6 @@ export const handleRegister = async (req: Request, res: Response) => {
         const duplicatedUser = await User.findOne({
             $or: [{ username: newUser.username }, { email: newUser.email }],
         });
-        console.log(duplicatedUser);
         if (duplicatedUser) {
             if (duplicatedUser.username === newUser.username) {
                 return res.status(409).json({

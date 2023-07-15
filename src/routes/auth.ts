@@ -1,7 +1,8 @@
 import express from "express";
 import * as authControllers from "../controllers/auth";
+import verifyJWT from "../middleware/verifyJWT";
 const authRouter = express.Router();
-authRouter.get("/", (req, res) => {
+authRouter.get("/", verifyJWT, (req, res) => {
     res.sendStatus(200);
 });
 authRouter.post("/register", authControllers.handleRegister);
