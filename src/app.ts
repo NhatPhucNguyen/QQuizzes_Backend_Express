@@ -7,11 +7,12 @@ import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth";
 import verifyJWT from "./middleware/verifyJWT";
 import cors from "cors";
+import collectionRouter from "./routes/collection";
 const app: Express = express();
 //PORT config
 const PORT = process.env.PORT || 5000;
 //connect to mongodb
-const mongoString = process.env.DATABASE_URI as string;
+const mongoString = process.env.DATABASE_URI_LOCAL as string;
 mongoose.connect(mongoString);
 const database = mongoose.connection;
 database.on("error", (err) => {
@@ -33,9 +34,7 @@ app.use(
 );
 //routers setup
 app.use("/auth", authRouter);
-app.get("/quizzes", verifyJWT, (req, res) => {
-    res.sendStatus(200);
-});
+app.use("/api/collection",collectionRouter)
 app.get("/", (req, res) => {
     res.redirect("https://github.com/NhatPhucNguyen/QQuizzes_Backend_Express");
 });

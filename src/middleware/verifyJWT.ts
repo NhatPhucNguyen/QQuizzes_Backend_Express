@@ -2,11 +2,6 @@ import jwt, { JwtPayload, Secret, VerifyOptions } from "jsonwebtoken";
 import "dotenv/config";
 import { NextFunction, Request, Response } from "express";
 
-declare module "express" {
-    export interface Request {
-        userId?: string;
-    }
-}
 const verifyJWT = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers["authorization"];
     if (!authHeader) {
