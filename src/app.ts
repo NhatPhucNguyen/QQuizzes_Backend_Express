@@ -34,13 +34,13 @@ app.use(
 );
 //routers setup
 app.use("/auth", authRouter);
-app.use("/api/collection",collectionRouter)
+app.use("/api/collection", collectionRouter);
 app.get("/", (req, res) => {
     res.redirect("https://github.com/NhatPhucNguyen/QQuizzes_Backend_Express");
 });
 //response errors other routes
 app.get("*", (req, res) => {
-    res.sendStatus(404);
+    res.status(404).json({ message: "URL not found." });
 });
 
 //Run server
