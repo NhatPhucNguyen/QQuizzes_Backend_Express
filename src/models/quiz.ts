@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import { ICollection } from "../interfaces/db_interfaces";
+import { IQuiz } from "../interfaces/db_interfaces";
 import bcrypt from "bcrypt";
 
-const collectionSchema = new mongoose.Schema<ICollection>(
+const quizSchema = new mongoose.Schema<IQuiz>(
     {
-        collectionName: {
+        quizName: {
             type: "string",
             required: true,
             unique: true,
@@ -25,7 +25,7 @@ const collectionSchema = new mongoose.Schema<ICollection>(
         },
     },
     {
-        collection: "collections",
+        collection: "quiz",
     }
 );
-export default mongoose.model("Collection", collectionSchema);
+export default mongoose.model("Quiz", quizSchema);

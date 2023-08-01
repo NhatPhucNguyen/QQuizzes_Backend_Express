@@ -7,7 +7,8 @@ import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth";
 import verifyJWT from "./middleware/verifyJWT";
 import cors from "cors";
-import collectionRouter from "./routes/collection";
+import quizRouter from "./routes/quiz";
+import questionRouter from "./routes/question";
 const app: Express = express();
 //PORT config
 const PORT = process.env.PORT || 5000;
@@ -34,7 +35,8 @@ app.use(
 );
 //routers setup
 app.use("/auth", authRouter);
-app.use("/api/collection", collectionRouter);
+app.use("/api/quiz", quizRouter);
+app.use("/api/quiz/:quizId", questionRouter);
 app.get("/", (req, res) => {
     res.redirect("https://github.com/NhatPhucNguyen/QQuizzes_Backend_Express");
 });
