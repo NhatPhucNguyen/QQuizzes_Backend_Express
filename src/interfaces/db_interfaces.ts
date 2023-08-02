@@ -19,11 +19,10 @@ export interface IQuiz {
 }
 
 export interface IQuestion {
-    questionNumber: number;
+    questionNumber?: number;
     question: string;
     desc?: string;
-    selection: ISelection[];
-    answer: ISelection;
+    selections: ISelection[];
     point: number;
     timeLimit: number;
     quizId: string;

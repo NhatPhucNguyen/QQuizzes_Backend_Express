@@ -5,7 +5,7 @@ const questionSchema = new mongoose.Schema<IQuestion>(
     {
         questionNumber: {
             type: "number",
-            required: true,
+            default: 0,
         },
         question: {
             type: "string",
@@ -14,8 +14,9 @@ const questionSchema = new mongoose.Schema<IQuestion>(
         desc: {
             type: "string",
         },
-        answer: {
-            required: true,
+        selections: {
+            type: [Object],
+            require: true,
         },
         point: {
             type: "number",
@@ -36,5 +37,19 @@ const questionSchema = new mongoose.Schema<IQuestion>(
         collection: "questions",
     }
 );
+
+questionSchema.pre("save", async function (this, next) {
+    try {
+        const questions = await mongoose
+            .model("Question", questionSchema)
+            .find({});
+        this.questionNumber = questions.length + 1;
+        next();
+    } catch (error) {
+        if (error) {
+            return next(error as mongoose.CallbackError);
+        }
+    }
+});
 
 export default mongoose.model("Question", questionSchema);
