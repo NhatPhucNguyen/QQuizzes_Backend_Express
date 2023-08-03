@@ -16,9 +16,7 @@ export const quizCreate = async (req: Request, res: Response) => {
             $and: [{ userId: userId }, { quizName: newQuiz.quizName }],
         });
         if (duplicatedQuiz) {
-            return res
-                .status(409)
-                .json({ message: "Quiz already existed." });
+            return res.status(409).json({ message: "Quiz already existed." });
         }
         const quizToAdd = new Quiz({
             ...newQuiz,
@@ -27,6 +25,7 @@ export const quizCreate = async (req: Request, res: Response) => {
         await quizToAdd.save();
         return res.status(200).json({
             message: "Quiz created successfully.",
+            quizId: quizToAdd._id,
         });
     } catch (error) {
         console.log(error);
@@ -37,11 +36,9 @@ export const quizCreate = async (req: Request, res: Response) => {
 };
 
 export const getSingleQuiz = async (req: Request, res: Response) => {
-    const name = req.params.name;
+    const quizId = req.params.quizId;
     try {
-        const foundQuiz = await Quiz.findOne({
-            quizName: name,
-        });
+        const foundQuiz = await Quiz.findById(quizId);
         if (!foundQuiz) {
             return res.status(404).json({ message: "Quiz not found." });
         }
@@ -52,7 +49,7 @@ export const getSingleQuiz = async (req: Request, res: Response) => {
     }
 };
 
-export const getOwnedQuizzes= async (req: Request, res: Response) => {
+export const getOwnedQuizzes = async (req: Request, res: Response) => {
     const userId = req.userId;
     try {
         const foundQuizzes = await Quiz.find({ userId });

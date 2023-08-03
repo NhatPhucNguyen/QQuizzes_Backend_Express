@@ -7,7 +7,6 @@ const quizSchema = new mongoose.Schema<IQuiz>(
         quizName: {
             type: "string",
             required: true,
-            unique: true,
         },
         topic: {
             type: "string",

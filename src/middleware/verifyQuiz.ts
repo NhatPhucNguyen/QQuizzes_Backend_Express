@@ -7,7 +7,6 @@ export const verifyQuiz = async (
     next: NextFunction
 ) => {
     const quizId = req.params.quizId;
-    console.log(req.params);
     try {
         const foundQuiz = await Quiz.findById(quizId);
         if (!foundQuiz) {

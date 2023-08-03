@@ -164,13 +164,17 @@ export const handleLogout = async (req: Request, res: Response) => {
     try {
         const foundUser = await User.findOne({ refreshToken: refreshToken });
         if (!foundUser) {
-            res.clearCookie("jwt", { httpOnly: true }); //clear cookies when user not exist in database
+            res.clearCookie("jwt", {
+                httpOnly: true,
+            }); //clear cookies when user not exist in database
             return res.status(403).json({
                 message: "No permission.",
             });
         }
         await User.findByIdAndUpdate(foundUser._id, { refreshToken: "" });
-        res.clearCookie("jwt", { httpOnly: true });
+        res.clearCookie("jwt", {
+            httpOnly: true,
+        });
         return res.sendStatus(204);
     } catch (err) {
         console.log(err);

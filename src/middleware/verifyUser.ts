@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import User from "../models/user"
-export const verifyUser = async (req:Request,res:Response,next:NextFunction) => {
+import User from "../models/user";
+export const verifyUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     const userId = req.userId;
     if (!userId) {
         return res.status(403).json({ message: "No permission." });
@@ -10,9 +14,9 @@ export const verifyUser = async (req:Request,res:Response,next:NextFunction) => 
         if (!foundUser) {
             return res.status(404).json({ message: "User does not exist." });
         }
-        next()
+        next();
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Something went wrong." });
     }
-}
+};
