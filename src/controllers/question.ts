@@ -15,16 +15,20 @@ export const createQuestion = async (req: Request, res: Response) => {
     try {
         //check if all selections are valid
         let onlyOneTrue = 0;
+        let isValid = true;
         newQuestion.selections.forEach((selection: ISelection) => {
             if (!selection.desc) {
-                return res
-                    .status(400)
-                    .json({ message: "Missing required fields." });
+                isValid = false;
             }
             if (selection.isTrue) {
                 onlyOneTrue++;
             }
         });
+        if (!isValid) {
+            return res
+                .status(400)
+                .json({ message: "Missing required fields." });
+        }
         //selection array must have at least 4 selections, only one of them is true
         if (onlyOneTrue !== 1) {
             return res
