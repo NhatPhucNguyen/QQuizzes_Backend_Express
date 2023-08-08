@@ -56,3 +56,33 @@ export const getAllQuestions = async (req: Request, res: Response) => {
         return res.status(500).json({ message: "Something went wrong" });
     }
 };
+
+export const deleteQuestion = async (req: Request, res: Response) => {
+    const { quizId, questionId } = req.params;
+    try {
+        if (!res.locals.isOwner) {
+            return res
+                .status(403)
+                .json({ message: "No permission to delete this question" });
+        }
+        const deletedQuestion = await Question.findByIdAndDelete(questionId);
+        if (!deletedQuestion) {
+            return res.status(404).json({ message: "Question Not found" });
+        }
+        await Question.updateMany(
+            {
+                $and: [
+                    { quizId: quizId },
+                    { questionNumber: { $gt: deletedQuestion.questionNumber } },
+                ],
+            },
+            { $inc: { questionNumber: -1 } }
+        );
+        return res
+            .status(200)
+            .json({ message: "Question deleted successfully" });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Something went wrong" });
+    }
+};

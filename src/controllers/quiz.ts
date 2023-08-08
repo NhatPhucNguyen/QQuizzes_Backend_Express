@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Quiz from "../models/quiz";
 import { IQuiz } from "../interfaces/db_interfaces";
+import Question from "../models/question";
 
 export const quizCreate = async (req: Request, res: Response) => {
     const userId = req.userId;
@@ -93,6 +94,7 @@ export const deleteQuiz = async (req: Request, res: Response) => {
         if (!deletedQuiz) {
             return res.status(404).json({ message: "Quiz not found." });
         }
+        await Question.deleteMany({ quizId: deletedQuiz._id });
         return res
             .status(200)
             .json({ message: "Quiz is deleted successfully" });

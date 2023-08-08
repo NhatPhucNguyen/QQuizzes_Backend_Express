@@ -42,7 +42,7 @@ questionSchema.pre("save", async function (this, next) {
     try {
         const questions = await mongoose
             .model("Question", questionSchema)
-            .find({});
+            .find({ quizId: this.quizId });
         this.questionNumber = questions.length + 1;
         next();
     } catch (error) {

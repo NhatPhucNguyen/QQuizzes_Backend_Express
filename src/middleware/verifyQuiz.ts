@@ -12,6 +12,9 @@ export const verifyQuiz = async (
         if (!foundQuiz) {
             return res.status(404).json({ message: "Quiz not found." });
         }
+        if (foundQuiz.userId === req.userId) {
+            res.locals.isOwner = true;
+        }
         next();
     } catch (error) {
         console.log(error);
