@@ -15,4 +15,5 @@ questionRouter.get(
     "/delete/question/:questionId",
     questionControllers.deleteQuestion
 );
+questionRouter.post("/question/:questionId/update",questionControllers.updateQuestion)
 export default questionRouter;

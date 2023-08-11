@@ -57,6 +57,61 @@ export const getAllQuestions = async (req: Request, res: Response) => {
     }
 };
 
+//update question
+export const updateQuestion = async (req: Request, res: Response) => {
+    const { quizId, questionId } = req.params;
+    const questionToUpdate = req.body as IQuestion;
+    if (
+        !questionToUpdate.question ||
+        !questionToUpdate.selections ||
+        questionToUpdate.selections.length < 4
+    ) {
+        return res.status(400).json({ message: "Missing required fields." });
+    }
+    try {
+        if (!res.locals.isOwner) {
+            return res
+                .status(403)
+                .json({ message: "No permission to update this question" });
+        }
+        //check if all selections are valid
+        let onlyOneTrue = 0;
+        let isValid = true;
+        questionToUpdate.selections.forEach((selection: ISelection) => {
+            if (!selection.desc) {
+                isValid = false;
+            }
+            if (selection.isTrue) {
+                onlyOneTrue++;
+            }
+        });
+        if (!isValid) {
+            return res
+                .status(400)
+                .json({ message: "Missing required fields." });
+        }
+        //selection array must have at least 4 selections, only one of them is true
+        if (onlyOneTrue !== 1) {
+            return res
+                .status(400)
+                .json({ message: "Must be only one selection is true." });
+        }
+        //save updated document
+        const updatedQuestion = await Question.findByIdAndUpdate(questionId, {
+            ...questionToUpdate,
+        });
+        if (updatedQuestion) {
+            return res
+                .status(200)
+                .json({ message: "Question updated successfully" });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Something went wrong" });
+    }
+};
+
+//delete question
 export const deleteQuestion = async (req: Request, res: Response) => {
     const { quizId, questionId } = req.params;
     try {
