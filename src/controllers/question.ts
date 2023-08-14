@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { IQuestion, ISelection } from "../interfaces/db_interfaces";
 import Question from "../models/question";
+import Quiz from "../models/quiz";
 //create a question
 export const createQuestion = async (req: Request, res: Response) => {
     const { quizId } = req.params;
@@ -39,6 +40,7 @@ export const createQuestion = async (req: Request, res: Response) => {
             ...newQuestion,
         });
         await questionToAdd.save();
+        await Quiz.findByIdAndUpdate(quizId, { $inc: { quantity: 1 } });
         return res.status(200).json({ message: "Question added successfully" });
     } catch (error) {
         console.log(error);
@@ -133,6 +135,7 @@ export const deleteQuestion = async (req: Request, res: Response) => {
             },
             { $inc: { questionNumber: -1 } }
         );
+        await Quiz.findByIdAndUpdate(quizId, { $inc: { quantity: -1 } });
         return res
             .status(200)
             .json({ message: "Question deleted successfully" });

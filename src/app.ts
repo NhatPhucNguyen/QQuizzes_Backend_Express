@@ -13,7 +13,7 @@ const app: Express = express();
 //PORT config
 const PORT = process.env.PORT || 5000;
 //connect to mongodb
-const mongoString = process.env.DATABASE_URI_LOCAL as string;
+const mongoString = process.env.DATABASE_URI as string;
 mongoose.connect(mongoString);
 const database = mongoose.connection;
 database.on("error", (err) => {
