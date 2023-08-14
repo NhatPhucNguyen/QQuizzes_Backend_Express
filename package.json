@@ -6,8 +6,9 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "rimraf ./dist && tsc",
-        "start": "npm install && npm run build && node ./dist/app.js",
-        "dev": "nodemon ./src/app.ts"
+        "start": "node ./dist/app.js",
+        "dev": "nodemon ./src/app.ts",
+        "postinstall": "npm run build"
     },
     "keywords": [],
     "author": "",
@@ -23,6 +24,7 @@
         "@types/morgan": "^1.9.4",
         "@types/node": "^20.4.1",
         "nodemon": "^3.0.1",
+        "typescript": "^5.1.6",
         "ts-node": "^10.9.1"
     },
     "engines": {
@@ -39,7 +41,6 @@
         "mongodb": "4.1",
         "mongoose": "^7.3.3",
         "morgan": "^1.10.0",
-        "typescript": "^5.1.6",
         "rimraf": "^5.0.1"
     }
 }
