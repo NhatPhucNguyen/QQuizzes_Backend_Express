@@ -5,7 +5,6 @@ import morgan from "morgan";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth";
-import verifyJWT from "./middleware/verifyJWT";
 import cors from "cors";
 import quizRouter from "./routes/quiz";
 import questionRouter from "./routes/question";
@@ -13,7 +12,8 @@ const app: Express = express();
 //PORT config
 const PORT = process.env.PORT || 5000;
 //connect to mongodb
-const mongoString = process.env.DATABASE_URI as string;
+const mongoString =
+    process.env.DATABASE_URI_LOCAL || (process.env.DATABASE_URI as string);
 mongoose.connect(mongoString);
 const database = mongoose.connection;
 database.on("error", (err) => {

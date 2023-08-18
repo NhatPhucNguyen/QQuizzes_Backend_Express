@@ -3,11 +3,11 @@ import Quiz from "../models/quiz";
 import { IQuiz } from "../interfaces/db_interfaces";
 import Question from "../models/question";
 
+//create a Quiz
 export const quizCreate = async (req: Request, res: Response) => {
     const userId = req.userId;
     try {
         const newQuiz = req.body as IQuiz;
-        console.log(newQuiz);
         if (!newQuiz.quizName || !newQuiz.topic) {
             return res.status(400).json({
                 message: "Missing required fields.",
@@ -35,7 +35,7 @@ export const quizCreate = async (req: Request, res: Response) => {
         });
     }
 };
-
+//get single public quiz
 export const getSingleQuiz = async (req: Request, res: Response) => {
     const quizId = req.params.quizId;
     try {
@@ -49,7 +49,7 @@ export const getSingleQuiz = async (req: Request, res: Response) => {
         return res.status(500).json({ message: "Something went wrong." });
     }
 };
-
+//get all quizzes belong to current user
 export const getOwnedQuizzes = async (req: Request, res: Response) => {
     const userId = req.userId;
     try {
@@ -60,7 +60,7 @@ export const getOwnedQuizzes = async (req: Request, res: Response) => {
         return res.status(500).json({ message: "Something went wrong." });
     }
 };
-
+//update a quiz
 export const updateQuiz = async (req: Request, res: Response) => {
     const userId = req.userId;
     const name = req.params.name;
@@ -83,7 +83,7 @@ export const updateQuiz = async (req: Request, res: Response) => {
         return res.status(500).json({ message: "Something went wrong." });
     }
 };
-
+//delete a quiz
 export const deleteQuiz = async (req: Request, res: Response) => {
     const userId = req.userId;
     const name = req.params.name;

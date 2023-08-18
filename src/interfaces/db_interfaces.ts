@@ -34,6 +34,18 @@ export interface ISelection {
     isTrue?: boolean;
 }
 
+export interface IPlayer {
+    userId: string;
+    quizParticipated: string;
+    attempts: IAttempt[];
+}
+
+export interface IAttempt {
+    score: number;
+    timeCompleted: number;
+    questionsCompleted: number;
+}
+
 declare module "express" {
     export interface Request {
         userId?: string;

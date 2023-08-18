@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema<IUser>(
         refreshToken: {
             type: "String",
             expires: 60 * 60 * 24,
-        },
+        }
     },
     {
         collection: "users",
