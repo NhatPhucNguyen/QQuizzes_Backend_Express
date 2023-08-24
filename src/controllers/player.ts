@@ -11,12 +11,16 @@ export const userPlay = async (
 ) => {
     const { quizId } = req.params;
     const userId = req.userId as string;
+    const requirementOfQuantity = 10;
     try {
+        //can not play quiz if number questions not satisfy
+        if (res.locals.foundQuiz.quantity as number < 10) {
+            return res
+                .status(406)
+                .json({ message: "Not allowed to be played." });
+        }
         //to check if user are testing this quiz
-        const foundQuiz = await Quiz.findOne({
-            $and: [{ _id: quizId }, { userId: userId }],
-        });
-        if (!foundQuiz) {
+        if (!res.locals.isOwner) {
             const foundPlayer = await Player.findOne({
                 $and: [{ userId: userId }, { quizParticipated: quizId }],
             });
@@ -25,30 +29,9 @@ export const userPlay = async (
                 const playerToAdd = new Player({
                     userId: userId,
                     quizParticipated: quizId,
-                    attempts: [
-                        {
-                            score: 0,
-                            timeCompleted: 0,
-                            questionsCompleted: 0,
-                        },
-                    ],
+                    attempts: [],
                 });
                 await playerToAdd.save();
-            } else {
-                //check if user already played this quiz before
-                const newAttempts: IAttempt[] = [
-                    ...foundPlayer.attempts,
-                    { score: 0, timeCompleted: 0, questionsCompleted: 0 },
-                ];
-                await Player.findOneAndUpdate(
-                    {
-                        $and: [
-                            { userId: userId },
-                            { quizParticipated: quizId },
-                        ],
-                    },
-                    { attempts: newAttempts }
-                );
             }
         }
         next();
@@ -62,20 +45,39 @@ export const handleResult = async (req: Request, res: Response) => {
     const { quizId } = req.params;
     const userId = req.userId;
     const result: IAttempt = req.body;
-    if (!result.questionsCompleted || !result.score || !result.timeCompleted) {
+    if (
+        result.correctAnswers === undefined ||
+        result.point === undefined ||
+        result.timeCompleted === undefined
+    ) {
         return res.status(400).json({ message: "Missing required fields" });
     }
     try {
+        //not update result when user preview the quiz
+        if (res.locals.isOwner) {
+            return res.status(202).json({ message: "The quiz was tested." });
+        }
         const foundPlayer = await Player.findOne({
             $and: [{ userId: userId }, { quizParticipated: quizId }],
         });
+
         if (!foundPlayer) {
             return res
                 .status(404)
-                .json({ message: "Player are not joining the quiz." });
+                .json({ message: "Player are not playing the quiz." });
         }
         const prevAttempts = foundPlayer.attempts;
-        prevAttempts[prevAttempts.length - 1] = result;
+        //delete last attempt when user does not play any question
+        const questionCountedLimit = 0;
+        if (
+            result.questionsCompleted &&
+            result.questionsCompleted <= questionCountedLimit
+        ) {
+            return res
+                .status(202)
+                .json({ message: "The result is not counted." });
+        }
+        prevAttempts.push(result);
         await Player.findOneAndUpdate(
             { $and: [{ userId: userId }, { quizParticipated: quizId }] },
             { attempts: prevAttempts }
@@ -88,3 +90,4 @@ export const handleResult = async (req: Request, res: Response) => {
         return res.status(500).json({ message: "Something went wrong." });
     }
 };
+//get all attempts of current player in the quiz

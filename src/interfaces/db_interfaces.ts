@@ -41,11 +41,11 @@ export interface IPlayer {
 }
 
 export interface IAttempt {
-    score: number;
+    point: number;
     timeCompleted: number;
-    questionsCompleted: number;
+    correctAnswers: number;
+    questionsCompleted?: number;
 }
-
 declare module "express" {
     export interface Request {
         userId?: string;

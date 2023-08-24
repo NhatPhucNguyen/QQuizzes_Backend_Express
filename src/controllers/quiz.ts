@@ -60,6 +60,20 @@ export const getOwnedQuizzes = async (req: Request, res: Response) => {
         return res.status(500).json({ message: "Something went wrong." });
     }
 };
+//get all quizzes not belong to current user
+export const getPublicQuizzes = async (req: Request, res: Response) => {
+    const userId = req.userId;
+    try {
+        //only get quiz has more than one question (playable)
+        const foundQuizzes = await Quiz.find({
+            $and: [{ userId: { $ne: userId } }, { quantity: { $gt: 0 } }],
+        });
+        return res.status(200).json(foundQuizzes);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Something went wrong." });
+    }
+};
 //update a quiz
 export const updateQuiz = async (req: Request, res: Response) => {
     const userId = req.userId;

@@ -12,6 +12,10 @@ export const verifyQuiz = async (
         if (!foundQuiz) {
             return res.status(404).json({ message: "Quiz not found." });
         }
+        else{
+            res.locals.foundQuiz = foundQuiz;
+        }
+        //check if current user created this quiz
         if (foundQuiz.userId === req.userId) {
             res.locals.isOwner = true;
         }
