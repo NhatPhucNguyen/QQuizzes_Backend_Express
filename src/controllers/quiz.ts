@@ -85,6 +85,12 @@ export const updateQuiz = async (req: Request, res: Response) => {
                 message: "Missing required fields.",
             });
         }
+        const duplicatedQuiz = await Quiz.findOne({
+            $and: [{ userId: userId }, { quizName: newQuiz.quizName }],
+        });
+        if (duplicatedQuiz) {
+            return res.status(409).json({ message: "Quiz already existed." });
+        }
         await Quiz.findOneAndUpdate(
             {
                 $and: [{ userId: userId }, { _id: quizId }],
@@ -108,7 +114,6 @@ export const deleteQuiz = async (req: Request, res: Response) => {
         if (!deletedQuiz) {
             return res.status(404).json({ message: "Quiz not found." });
         }
-        await Question.deleteMany({ quizId: deletedQuiz._id });
         return res
             .status(200)
             .json({ message: "Quiz is deleted successfully" });
