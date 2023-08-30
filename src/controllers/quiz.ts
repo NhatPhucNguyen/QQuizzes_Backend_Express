@@ -66,7 +66,7 @@ export const getPublicQuizzes = async (req: Request, res: Response) => {
     try {
         //only get quiz has more than one question (playable)
         const foundQuizzes = await Quiz.find({
-            $and: [{ userId: { $ne: userId } }, { quantity: { $gt: 0 } }],
+            $and: [{ userId: { $ne: userId } }, { quantity: { $gt: 9 } }],
         });
         return res.status(200).json(foundQuizzes);
     } catch (error) {
@@ -77,7 +77,7 @@ export const getPublicQuizzes = async (req: Request, res: Response) => {
 //update a quiz
 export const updateQuiz = async (req: Request, res: Response) => {
     const userId = req.userId;
-    const name = req.params.name;
+    const quizId = req.params.quizId;
     try {
         const newQuiz = req.body as IQuiz;
         if (!newQuiz.quizName || !newQuiz.topic) {
@@ -87,7 +87,7 @@ export const updateQuiz = async (req: Request, res: Response) => {
         }
         await Quiz.findOneAndUpdate(
             {
-                $and: [{ userId: userId }, { quizName: name }],
+                $and: [{ userId: userId }, { _id: quizId }],
             },
             { ...newQuiz }
         );
@@ -100,10 +100,10 @@ export const updateQuiz = async (req: Request, res: Response) => {
 //delete a quiz
 export const deleteQuiz = async (req: Request, res: Response) => {
     const userId = req.userId;
-    const name = req.params.name;
+    const quizId = req.params.quizId;
     try {
         const deletedQuiz = await Quiz.findOneAndDelete({
-            $and: [{ userId }, { quizName: name }],
+            $and: [{ userId }, { _id: quizId }],
         });
         if (!deletedQuiz) {
             return res.status(404).json({ message: "Quiz not found." });

@@ -10,6 +10,6 @@ quizRouter.post("/create", quizController.quizCreate);
 quizRouter.get("/get/:quizId", quizController.getSingleQuiz);
 quizRouter.get("/admin/getAll", quizController.getOwnedQuizzes);
 quizRouter.get("/user/getAll", quizController.getPublicQuizzes);
-quizRouter.patch("/update/:name", quizController.updateQuiz);
-quizRouter.delete("/delete/:name", quizController.deleteQuiz);
+quizRouter.patch("/update/:quizId", quizController.updateQuiz);
+quizRouter.delete("/delete/:quizId", quizController.deleteQuiz);
 export default quizRouter;
