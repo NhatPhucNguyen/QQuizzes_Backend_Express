@@ -88,8 +88,10 @@ export const updateQuiz = async (req: Request, res: Response) => {
         const duplicatedQuiz = await Quiz.findOne({
             $and: [{ userId: userId }, { quizName: newQuiz.quizName }],
         });
-        if (duplicatedQuiz) {
-            return res.status(409).json({ message: "Quiz already existed." });
+        if (duplicatedQuiz && duplicatedQuiz._id.toString() !== quizId) {
+            return res
+                .status(409)
+                .json({ message: "Quiz name already existed." });
         }
         await Quiz.findOneAndUpdate(
             {

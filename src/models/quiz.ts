@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
 import { IQuiz } from "../interfaces/db_interfaces";
-import bcrypt from "bcrypt";
-
 const quizSchema = new mongoose.Schema<IQuiz>(
     {
         quizName: {
@@ -21,7 +19,7 @@ const quizSchema = new mongoose.Schema<IQuiz>(
         userId: {
             type: "string",
             required: true,
-        },
+        }
     },
     {
         collection: "quiz",

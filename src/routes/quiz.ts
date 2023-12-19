@@ -6,10 +6,10 @@ const quizRouter = express.Router({ mergeParams: true });
 
 quizRouter.use(verifyJWT);
 quizRouter.use(verifyUser);
-quizRouter.post("/create", quizController.quizCreate);
-quizRouter.get("/get/:quizId", quizController.getSingleQuiz);
-quizRouter.get("/admin/getAll", quizController.getOwnedQuizzes);
-quizRouter.get("/user/getAll", quizController.getPublicQuizzes);
-quizRouter.patch("/update/:quizId", quizController.updateQuiz);
-quizRouter.delete("/delete/:quizId", quizController.deleteQuiz);
+quizRouter.post("/", quizController.quizCreate);
+quizRouter.get("/admin", quizController.getOwnedQuizzes);
+quizRouter.get("/public", quizController.getPublicQuizzes);
+quizRouter.get("/:quizId", quizController.getSingleQuiz);
+quizRouter.put("/:quizId", quizController.updateQuiz);
+quizRouter.delete("/:quizId", quizController.deleteQuiz);
 export default quizRouter;

@@ -9,7 +9,7 @@
         "strict": true,
         "noImplicitAny": true,
         "esModuleInterop": true,
-        "moduleResolution": "Node"
+        "moduleResolution": "NodeNext"
     },
     "ts-node": {
         "esm": true

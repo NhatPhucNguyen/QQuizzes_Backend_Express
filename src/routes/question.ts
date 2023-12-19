@@ -10,15 +10,15 @@ questionRouter.use(verifyQuiz);
 //access play router
 questionRouter.use("/play", playerRouter, questionControllers.getAllQuestions);
 //create a question
-questionRouter.post("/question/create", questionControllers.createQuestion);
+questionRouter.post("/", questionControllers.createQuestion);
 //get all questions from a quiz
 questionRouter.get(
-    "/get/questions/getAll",
+    "/",
     questionControllers.getAllQuestions
 );
 //get all questions from a quiz belong to user
 questionRouter.get(
-    "/get/admin/questions/getAll",
+    "/private",
     (req, res, next) => {
         if (!res.locals.isOwner) {
             return res.status(401).json({
@@ -29,12 +29,12 @@ questionRouter.get(
     },
     questionControllers.getAllQuestions
 );
-questionRouter.get(
-    "/delete/question/:questionId",
+questionRouter.delete(
+    "/:questionId",
     questionControllers.deleteQuestion
 );
-questionRouter.post(
-    "/question/:questionId/update",
+questionRouter.put(
+    "/:questionId",
     questionControllers.updateQuestion
 );
 export default questionRouter;

@@ -16,6 +16,7 @@ export interface IQuiz {
     level: string;
     quantity?: number;
     userId: string;
+    joinCode:string;
 }
 
 export interface IQuestion {

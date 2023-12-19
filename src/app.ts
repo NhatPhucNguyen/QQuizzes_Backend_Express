@@ -34,9 +34,9 @@ app.use(
     })
 );
 //routers setup
-app.use("/auth", authRouter);
-app.use("/api/quiz", quizRouter);
-app.use("/api/quiz/:quizId", questionRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/quizzes", quizRouter);
+app.use("/api/quizzes/:quizId/questions", questionRouter);
 app.get("/", (req, res) => {
     res.redirect("https://github.com/NhatPhucNguyen/QQuizzes_Backend_Express");
 });
