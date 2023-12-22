@@ -14,6 +14,7 @@ export const verifyUser = async (
         if (!foundUser) {
             return res.status(404).json({ message: "User does not exist." });
         }
+        req.displayName = foundUser.fullName;
         next();
     } catch (error) {
         console.log(error);

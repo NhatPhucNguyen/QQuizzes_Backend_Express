@@ -8,6 +8,7 @@ import authRouter from "./routes/auth";
 import cors from "cors";
 import quizRouter from "./routes/quiz";
 import questionRouter from "./routes/question";
+import playerRouter from "./routes/player";
 const app: Express = express();
 //PORT config
 const PORT = process.env.PORT || 5000;
@@ -37,6 +38,7 @@ app.use(
 app.use("/api/auth", authRouter);
 app.use("/api/quizzes", quizRouter);
 app.use("/api/quizzes/:quizId/questions", questionRouter);
+app.use("/api/quizzes/:quizId/play", playerRouter);
 app.get("/", (req, res) => {
     res.redirect("https://github.com/NhatPhucNguyen/QQuizzes_Backend_Express");
 });

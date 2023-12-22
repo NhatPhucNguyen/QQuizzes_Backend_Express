@@ -1,5 +1,5 @@
-import mongoose, { Schema } from "mongoose";
-import { IPlayer } from "../interfaces/db_interfaces";
+import mongoose, { Schema, SchemaType } from "mongoose";
+import { IPlayer, IResult } from "../interfaces/db_interfaces";
 
 const playerSchema = new Schema<IPlayer>(
     {
@@ -8,11 +8,15 @@ const playerSchema = new Schema<IPlayer>(
             required: true,
         },
         quizParticipated: {
-            type:"string",
-            require:true
+            type: "string",
+            require: true,
         },
-        attempts: {
-            type: [Object],
+        displayName: {
+            type: "string",
+            required: true,
+        },
+        result: {
+            type: Schema.Types.Mixed,
         },
     },
     { collection: "players" }

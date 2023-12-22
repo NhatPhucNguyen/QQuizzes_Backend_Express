@@ -2,13 +2,10 @@ import express from "express";
 import * as questionControllers from "../controllers/question";
 import verifyJWT from "../middleware/verifyJWT";
 import { verifyQuiz } from "../middleware/verifyQuiz";
-import playerRouter from "./player";
 
 const questionRouter = express.Router({ mergeParams: true });
 questionRouter.use(verifyJWT);
 questionRouter.use(verifyQuiz);
-//access play router
-questionRouter.use("/play", playerRouter, questionControllers.getAllQuestions);
 //create a question
 questionRouter.post("/", questionControllers.createQuestion);
 //get all questions from a quiz

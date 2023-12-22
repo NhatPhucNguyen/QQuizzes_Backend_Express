@@ -38,17 +38,20 @@ export interface ISelection {
 export interface IPlayer {
     userId: string;
     quizParticipated: string;
-    attempts: IAttempt[];
+    result: IResult;
+    displayName:string
 }
 
-export interface IAttempt {
-    point: number;
+export interface IResult {
+    highestPoint: number;
     timeCompleted: number;
     correctAnswers: number;
     questionsCompleted?: number;
+    attempts:number
 }
 declare module "express" {
     export interface Request {
         userId?: string;
+        displayName?:string
     }
 }

@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import Quiz from "../models/quiz";
 import User from "../models/user";
 import Player from "../models/player";
-import { IPlayer, IAttempt } from "../interfaces/db_interfaces";
+import { IPlayer, IResult } from "../interfaces/db_interfaces";
 //increase attempts and pre-set the score and time completed
 export const userPlay = async (
     req: Request,
@@ -11,6 +11,7 @@ export const userPlay = async (
 ) => {
     const { quizId } = req.params;
     const userId = req.userId as string;
+    const displayName = req.displayName;
     const requirementOfQuantity = 10;
     try {
         //can not play quiz if number questions not satisfy
@@ -19,7 +20,7 @@ export const userPlay = async (
                 .status(406)
                 .json({ message: "Not allowed to be played." });
         }
-        //to check if user are testing this quiz
+        //to check if user are previewing this quiz
         if (!res.locals.isOwner) {
             const foundPlayer = await Player.findOne({
                 $and: [{ userId: userId }, { quizParticipated: quizId }],
@@ -29,7 +30,8 @@ export const userPlay = async (
                 const playerToAdd = new Player({
                     userId: userId,
                     quizParticipated: quizId,
-                    attempts: [],
+                    displayName: displayName,
+                    result: {} as IResult,
                 });
                 await playerToAdd.save();
             }
@@ -44,10 +46,10 @@ export const userPlay = async (
 export const handleResult = async (req: Request, res: Response) => {
     const { quizId } = req.params;
     const userId = req.userId;
-    const result: IAttempt = req.body;
+    const result: IResult = req.body;
     if (
         result.correctAnswers === undefined ||
-        result.point === undefined ||
+        result.highestPoint === undefined ||
         result.timeCompleted === undefined
     ) {
         return res.status(400).json({ message: "Missing required fields" });
@@ -66,8 +68,7 @@ export const handleResult = async (req: Request, res: Response) => {
                 .status(404)
                 .json({ message: "Player are not participated in the quiz." });
         }
-        const prevAttempts = foundPlayer.attempts;
-        //delete last attempt when user does not play any question
+        //not saving result when user does not play any question
         const questionCountedLimit = 0;
         if (
             result.questionsCompleted &&
@@ -77,11 +78,28 @@ export const handleResult = async (req: Request, res: Response) => {
                 .status(202)
                 .json({ message: "The result is not counted." });
         }
-        prevAttempts.push(result);
-        await Player.findOneAndUpdate(
-            { $and: [{ userId: userId }, { quizParticipated: quizId }] },
-            { attempts: prevAttempts }
-        );
+
+        //save result if this is first time user play this quiz
+        if (!foundPlayer.result) {
+            foundPlayer.result = { ...result, attempts: 1 };
+            await foundPlayer.save();
+            return res
+                .status(200)
+                .json({ message: "Result successfully updated." });
+        }
+        //save result if this is highest point user get
+        if (result.highestPoint > foundPlayer.result.highestPoint) {
+            foundPlayer.result = {
+                ...result,
+                attempts: foundPlayer.result.attempts + 1,
+            } as IResult;
+        } else {
+            foundPlayer.result = {
+                ...foundPlayer.result,
+                attempts: foundPlayer.result.attempts + 1,
+            } as IResult;
+        }
+        await foundPlayer.save();
         return res
             .status(200)
             .json({ message: "Result successfully updated." });
@@ -91,7 +109,7 @@ export const handleResult = async (req: Request, res: Response) => {
     }
 };
 //get all attempts of current player in the quiz
-export const getPlayerAttempts = async (req: Request, res: Response) => {
+export const getPlayerResult = async (req: Request, res: Response) => {
     const { quizId } = req.params;
     const userId = req.userId;
     try {
@@ -103,7 +121,30 @@ export const getPlayerAttempts = async (req: Request, res: Response) => {
                 .status(404)
                 .json({ message: "Player are not participated in the quiz." });
         }
-        return res.status(200).json({ attempts: foundPlayer.attempts });
+        return res.status(200).json({ result: foundPlayer.result });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Something went wrong." });
+    }
+};
+
+//get all users played this quiz
+export const getPlayerParticipated = async (req: Request, res: Response) => {
+    const { quizId } = req.params;
+    const { offset } = req.query;
+    const limit: number = isNaN(Number(offset)) ? 0 : Number(offset);
+    try {
+        //get all player based on: highest point > time completed > attempts with offset
+        const playersList = await Player.find({
+            quizParticipated: quizId,
+        })
+            .sort({
+                "result.highestPoint": -1,
+                "result.timeCompleted": 1,
+                "result.attempts": 1,
+            })
+            .limit(limit);
+        return res.status(200).json(playersList);
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Something went wrong." });
