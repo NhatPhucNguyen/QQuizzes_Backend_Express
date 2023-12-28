@@ -95,6 +95,7 @@ export const handleLogin = async (req: Request, res: Response) => {
             return res.status(200).json({
                 accessToken,
                 fullName: foundUser.fullName,
+                userId:foundUser._id
             });
         } catch (err) {
             console.log(err);

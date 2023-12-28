@@ -1,3 +1,4 @@
+
 export interface IUser {
     username: string;
     password: string;
@@ -15,8 +16,11 @@ export interface IQuiz {
     topic: string;
     level: string;
     quantity?: number;
+    totalPoints: number;
+    timeLimit: number;
     userId: string;
-    joinCode:string;
+    joinCode: string;
+    numberOfPlays:number;
 }
 
 export interface IQuestion {
@@ -30,7 +34,6 @@ export interface IQuestion {
 }
 
 export interface ISelection {
-    selectionNumber: number;
     desc: string;
     isTrue?: boolean;
 }
@@ -39,7 +42,7 @@ export interface IPlayer {
     userId: string;
     quizParticipated: string;
     result: IResult;
-    displayName:string
+    displayName: string;
 }
 
 export interface IResult {
@@ -47,11 +50,11 @@ export interface IResult {
     timeCompleted: number;
     correctAnswers: number;
     questionsCompleted?: number;
-    attempts:number
+    attempts: number;
 }
 declare module "express" {
     export interface Request {
         userId?: string;
-        displayName?:string
+        displayName?: string;
     }
 }

@@ -19,7 +19,7 @@ const playerSchema = new Schema<IPlayer>(
             type: Schema.Types.Mixed,
         },
     },
-    { collection: "players" }
+    { collection: "players", timestamps: true }
 );
 
 export default mongoose.model("Player", playerSchema);

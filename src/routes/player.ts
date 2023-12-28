@@ -6,11 +6,7 @@ import { verifyUser } from "../middleware/verifyUser";
 const playerRouter = express.Router({ mergeParams: true });
 playerRouter.use(verifyUser);
 playerRouter.use(verifyQuiz);
-playerRouter.get(
-    "/",
-    playerController.userPlay,
-    questionControllers.getAllQuestions
-);
+playerRouter.get("/", playerController.userPlay);
 playerRouter.put("/result", playerController.handleResult);
 playerRouter.get("/result", playerController.getPlayerResult);
 playerRouter.get(

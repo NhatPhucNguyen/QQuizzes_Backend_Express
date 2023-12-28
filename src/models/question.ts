@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { IQuestion, ISelection } from "../interfaces/db_interfaces";
-
+import Quiz from "../models/quiz";
 const questionSchema = new mongoose.Schema<IQuestion>(
     {
         questionNumber: {
@@ -35,6 +35,7 @@ const questionSchema = new mongoose.Schema<IQuestion>(
     },
     {
         collection: "questions",
+        timestamps: true,
     }
 );
 
@@ -51,5 +52,4 @@ questionSchema.pre("save", async function (this, next) {
         }
     }
 });
-
 export default mongoose.model("Question", questionSchema);

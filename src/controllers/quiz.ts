@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Quiz from "../models/quiz";
 import { IQuiz } from "../interfaces/db_interfaces";
-import Question from "../models/question";
+import { Types } from "mongoose";
 
 //create a Quiz
 export const quizCreate = async (req: Request, res: Response) => {
@@ -38,6 +38,9 @@ export const quizCreate = async (req: Request, res: Response) => {
 //get single public quiz
 export const getSingleQuiz = async (req: Request, res: Response) => {
     const quizId = req.params.quizId;
+    if (!Types.ObjectId.isValid(quizId)) {
+        return res.status(404).json({ message: "Quiz Id is not valid" });
+    }
     try {
         const foundQuiz = await Quiz.findById(quizId);
         if (!foundQuiz) {
@@ -53,7 +56,9 @@ export const getSingleQuiz = async (req: Request, res: Response) => {
 export const getOwnedQuizzes = async (req: Request, res: Response) => {
     const userId = req.userId;
     try {
-        const foundQuizzes = await Quiz.find({ userId });
+        const foundQuizzes = await Quiz.find({ userId }).sort({
+            updatedAt: -1,
+        });
         return res.status(200).json(foundQuizzes);
     } catch (error) {
         console.log(error);
@@ -63,11 +68,75 @@ export const getOwnedQuizzes = async (req: Request, res: Response) => {
 //get all quizzes not belong to current user
 export const getPublicQuizzes = async (req: Request, res: Response) => {
     const userId = req.userId;
-    try {
-        //only get quiz has more than one question (playable)
-        const foundQuizzes = await Quiz.find({
-            $and: [{ userId: { $ne: userId } }, { quantity: { $gt: 9 } }],
+    const minNumberOfQuestions = 10;
+    const maxNumberOfQuestions = 100;
+    const { minQuantity, maxQuantity, levels, topicName, sort, key } =
+        req.query;
+    const levelRange =
+        levels && typeof levels === "string"
+            ? levels
+                  .split("%2C")[0]
+                  .split(",")
+                  .map((level) =>
+                      level ? level[0].toUpperCase() + level.slice(1) : level
+                  )
+            : ["Basic", "Medium", "Hard"];
+    const sortQuery =
+        typeof sort === "string" && sort === "mostPlays"
+            ? "-numberOfPlays"
+            : "updatedAt";
+    if (
+        Number(minQuantity) < minNumberOfQuestions ||
+        Number(maxQuantity) < minNumberOfQuestions
+    ) {
+        return res.status(406).json({
+            message: `Min quantity or max quantity must be greater than ${minNumberOfQuestions}`,
         });
+    }
+    try {
+        //only get quiz has equal or more than 10 question (playable)
+        const foundQuizzes = await Quiz.find({
+            $and: [
+                { userId: { $ne: userId } },
+                {
+                    quantity: {
+                        $gte: Number(minQuantity) || minNumberOfQuestions,
+                        $lt: Number(maxQuantity) || maxNumberOfQuestions,
+                    },
+                    topic: {
+                        $regex: topicName || "",
+                        $options: "i",
+                    },
+                    level: {
+                        $in: levelRange,
+                    },
+                    quizName: {
+                        $regex: key || "",
+                        $options: "i",
+                    },
+                },
+            ],
+        }).sort(sortQuery);
+        return res.status(200).json(foundQuizzes);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Something went wrong." });
+    }
+};
+//get all quizzes not belong to current user by topic
+export const getPublicQuizzesByTopic = async (req: Request, res: Response) => {
+    const userId = req.userId;
+    const { topicName } = req.params;
+    const minNumberOfQuestions = 10;
+    try {
+        //only get quiz has equal or more than 10 question (playable)
+        const foundQuizzes = await Quiz.find({
+            $and: [
+                { userId: { $ne: userId } },
+                { quantity: { $gt: minNumberOfQuestions - 1 } },
+                { topic: topicName[0].toUpperCase() + topicName.slice(1) },
+            ],
+        }).sort({ updatedAt: -1 });
         return res.status(200).json(foundQuizzes);
     } catch (error) {
         console.log(error);
@@ -78,6 +147,9 @@ export const getPublicQuizzes = async (req: Request, res: Response) => {
 export const updateQuiz = async (req: Request, res: Response) => {
     const userId = req.userId;
     const quizId = req.params.quizId;
+    if (!Types.ObjectId.isValid(quizId)) {
+        return res.status(404).json({ message: "Quiz Id is not valid" });
+    }
     try {
         const newQuiz = req.body as IQuiz;
         if (!newQuiz.quizName || !newQuiz.topic) {

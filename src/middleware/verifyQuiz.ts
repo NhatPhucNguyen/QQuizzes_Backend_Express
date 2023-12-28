@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import Quiz from "../models/quiz";
+import { Types } from "mongoose";
 
 export const verifyQuiz = async (
     req: Request,
@@ -7,6 +8,9 @@ export const verifyQuiz = async (
     next: NextFunction
 ) => {
     const quizId = req.params.quizId;
+    if (!Types.ObjectId.isValid(quizId)) {
+        return res.status(404).json({ message: "Quiz Id is not valid" });
+    }
     try {
         const foundQuiz = await Quiz.findById(quizId);
         if (!foundQuiz) {

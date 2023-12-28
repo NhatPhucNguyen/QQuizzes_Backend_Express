@@ -4,11 +4,7 @@ import User from "../models/user";
 import Player from "../models/player";
 import { IPlayer, IResult } from "../interfaces/db_interfaces";
 //increase attempts and pre-set the score and time completed
-export const userPlay = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+export const userPlay = async (req: Request, res: Response) => {
     const { quizId } = req.params;
     const userId = req.userId as string;
     const displayName = req.displayName;
@@ -21,22 +17,26 @@ export const userPlay = async (
                 .json({ message: "Not allowed to be played." });
         }
         //to check if user are previewing this quiz
-        if (!res.locals.isOwner) {
-            const foundPlayer = await Player.findOne({
-                $and: [{ userId: userId }, { quizParticipated: quizId }],
-            });
-            //check if user already participated this quiz
-            if (!foundPlayer) {
-                const playerToAdd = new Player({
-                    userId: userId,
-                    quizParticipated: quizId,
-                    displayName: displayName,
-                    result: {} as IResult,
-                });
-                await playerToAdd.save();
-            }
+        if (res.locals.isOwner) {
+            return res.status(200).json({ message: "Previewing" });
         }
-        next();
+        const foundPlayer = await Player.findOne({
+            $and: [{ userId: userId }, { quizParticipated: quizId }],
+        });
+        //check if user plays this quiz in the first time
+        if (!foundPlayer) {
+            const playerToAdd = new Player({
+                userId: userId,
+                quizParticipated: quizId,
+                displayName: displayName,
+                result: {} as IResult,
+            });
+            await playerToAdd.save();
+        }
+        await Quiz.findByIdAndUpdate(quizId, {
+            $inc: { numberOfPlays: 1 },
+        });
+        return res.status(200).json({ message: "Ready to play" });
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Something went wrong." });
@@ -108,7 +108,7 @@ export const handleResult = async (req: Request, res: Response) => {
         return res.status(500).json({ message: "Something went wrong." });
     }
 };
-//get all attempts of current player in the quiz
+//get current result of player
 export const getPlayerResult = async (req: Request, res: Response) => {
     const { quizId } = req.params;
     const userId = req.userId;
@@ -116,12 +116,7 @@ export const getPlayerResult = async (req: Request, res: Response) => {
         const foundPlayer = await Player.findOne({
             $and: [{ userId: userId }, { quizParticipated: quizId }],
         });
-        if (!foundPlayer) {
-            return res
-                .status(404)
-                .json({ message: "Player are not participated in the quiz." });
-        }
-        return res.status(200).json({ result: foundPlayer.result });
+        return res.status(200).json(foundPlayer);
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Something went wrong." });
@@ -131,8 +126,8 @@ export const getPlayerResult = async (req: Request, res: Response) => {
 //get all users played this quiz
 export const getPlayerParticipated = async (req: Request, res: Response) => {
     const { quizId } = req.params;
-    const { offset } = req.query;
-    const limit: number = isNaN(Number(offset)) ? 0 : Number(offset);
+    const { limit } = req.query;
+    const limitParam = isNaN(Number(limit)) ? 0 : Number(limit);
     try {
         //get all player based on: highest point > time completed > attempts with offset
         const playersList = await Player.find({
@@ -143,7 +138,7 @@ export const getPlayerParticipated = async (req: Request, res: Response) => {
                 "result.timeCompleted": 1,
                 "result.attempts": 1,
             })
-            .limit(limit);
+            .limit(limitParam);
         return res.status(200).json(playersList);
     } catch (error) {
         console.log(error);
