@@ -9,7 +9,6 @@ quizRouter.use(verifyUser);
 quizRouter.post("/", quizController.quizCreate);
 quizRouter.get("/admin", quizController.getOwnedQuizzes);
 quizRouter.get("/public", quizController.getPublicQuizzes);
-quizRouter.get("/public/:topicName",quizController.getPublicQuizzesByTopic);
 quizRouter.get("/:quizId", quizController.getSingleQuiz);
 quizRouter.put("/:quizId", quizController.updateQuiz);
 quizRouter.delete("/:quizId", quizController.deleteQuiz);

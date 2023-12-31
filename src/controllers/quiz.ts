@@ -24,10 +24,7 @@ export const quizCreate = async (req: Request, res: Response) => {
             userId: userId,
         });
         await quizToAdd.save();
-        return res.status(200).json({
-            message: "Quiz created successfully.",
-            quizId: quizToAdd._id,
-        });
+        return res.status(200).json(quizToAdd);
     } catch (error) {
         console.log(error);
         res.status(500).json({
@@ -123,26 +120,6 @@ export const getPublicQuizzes = async (req: Request, res: Response) => {
         return res.status(500).json({ message: "Something went wrong." });
     }
 };
-//get all quizzes not belong to current user by topic
-export const getPublicQuizzesByTopic = async (req: Request, res: Response) => {
-    const userId = req.userId;
-    const { topicName } = req.params;
-    const minNumberOfQuestions = 10;
-    try {
-        //only get quiz has equal or more than 10 question (playable)
-        const foundQuizzes = await Quiz.find({
-            $and: [
-                { userId: { $ne: userId } },
-                { quantity: { $gt: minNumberOfQuestions - 1 } },
-                { topic: topicName[0].toUpperCase() + topicName.slice(1) },
-            ],
-        }).sort({ updatedAt: -1 });
-        return res.status(200).json(foundQuizzes);
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: "Something went wrong." });
-    }
-};
 //update a quiz
 export const updateQuiz = async (req: Request, res: Response) => {
     const userId = req.userId;
@@ -165,13 +142,13 @@ export const updateQuiz = async (req: Request, res: Response) => {
                 .status(409)
                 .json({ message: "Quiz name already existed." });
         }
-        await Quiz.findOneAndUpdate(
+        const updatedQuiz = await Quiz.findOneAndUpdate(
             {
                 $and: [{ userId: userId }, { _id: quizId }],
             },
             { ...newQuiz }
         );
-        return res.status(200).json("Quiz is successfully update.");
+        return res.status(200).json(updatedQuiz);
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Something went wrong." });
