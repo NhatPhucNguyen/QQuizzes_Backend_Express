@@ -31,7 +31,10 @@ app.use(cookieParser());
 app.use(
     cors({
         credentials: true,
-        origin: true,
+        origin: [
+            "https://localhost:5173",
+            "https://q-quizzes-frontend-react.vercel.app",
+        ],
     })
 );
 //routers setup
