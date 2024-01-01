@@ -89,7 +89,7 @@ export const handleLogin = async (req: Request, res: Response) => {
             res.cookie("jwt", refreshToken, {
                 httpOnly: true, //http only to prevent access by using JS
                 maxAge: 24 * 60 * 60 * 1000,
-                sameSite: "lax",
+                sameSite: "none",
                 secure: true,
             });
             return res.status(200).json({
