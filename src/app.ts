@@ -33,6 +33,7 @@ app.use(
         credentials: true,
         origin: [
             "https://localhost:5173",
+            "http://localhost:5173",
             "https://q-quizzes-frontend-react.vercel.app",
         ],
     })
