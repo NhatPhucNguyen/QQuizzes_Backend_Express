@@ -155,6 +155,7 @@ export const handleRefreshToken = async (req: Request, res: Response) => {
 };
 export const handleLogout = async (req: Request, res: Response) => {
     const cookies: { jwt: string } = req.cookies;
+    console.log(cookies);
     //checking cookies exist
     if (!cookies.jwt) {
         return res.status(401).json({
