@@ -11,7 +11,7 @@ Welcome to the QQuizzes API repository! This API serves as the backend for the Q
 -   **API Documentation**: Detailed documentation for API endpoints and usage.
 
 ## API Demo
-
+https://api-qquizzes-b24b27944f64.herokuapp.com/api
 
 ## Installation
 
