@@ -54,7 +54,7 @@ export const createQuestion = async (req: Request, res: Response) => {
                 timeLimit: questionToAdd.timeLimit,
             },
         });
-        return res.status(200).json({ message: "Question added successfully" });
+        return res.status(200).json(questionToAdd);
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Something went wrong" });
@@ -125,7 +125,7 @@ export const updateQuestion = async (req: Request, res: Response) => {
             await quizUpdater(quizId);
             return res
                 .status(200)
-                .json({ message: "Question updated successfully" });
+                .json(updatedQuestion);
         }
     } catch (error) {
         console.log(error);
@@ -162,7 +162,7 @@ export const deleteQuestion = async (req: Request, res: Response) => {
         await quizUpdater(quizId);
         return res
             .status(200)
-            .json({ message: "Question deleted successfully" });
+            .json(deletedQuestion);
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Something went wrong" });

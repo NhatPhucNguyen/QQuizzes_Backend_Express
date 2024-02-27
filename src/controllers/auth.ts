@@ -95,7 +95,7 @@ export const handleLogin = async (req: Request, res: Response) => {
             return res.status(200).json({
                 accessToken,
                 fullName: foundUser.fullName,
-                userId:foundUser._id
+                userId: foundUser._id,
             });
         } catch (err) {
             console.log(err);
@@ -155,7 +155,7 @@ export const handleRefreshToken = async (req: Request, res: Response) => {
 };
 export const handleLogout = async (req: Request, res: Response) => {
     const cookies: { jwt: string } = req.cookies;
-    console.log(cookies)
+    console.log(cookies);
     //checking cookies exist
     if (!cookies.jwt) {
         return res.status(401).json({
