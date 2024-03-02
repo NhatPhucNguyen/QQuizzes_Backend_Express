@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>QQuizzes API</title>
+        <meta name="description" content="" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body>
+        <main class="px-4 w-full">
+            <h1 class="text-4xl font-semi-bold">QQuizzes API Document</h1>
+            <h2
+                class="text-2xl font-bold w-full border-b-2 border-gray-500 mt-4"
+            >
+                About
+            </h2>
+            <p>
+                Welcome to the QQuizzes API document! This API serves as the
+                backend for the Quizzes web application, providing
+                functionalities for managing quizzes, users, authentication, and
+                more.
+            </p>
+            <h2
+                class="text-2xl font-bold w-full border-b-2 border-gray-500 mt-4"
+            >
+                End Point
+            </h2>
+            <p>
+                <a
+                    class="text-blue-500 underline"
+                    href="http://api-qquizzes-b24b27944f64.herokuapp.com/api"
+                    >http://api-qquizzes-b24b27944f64.herokuapp.com/api</a
+                >
+            </p>
+            <h2
+                class="text-2xl font-bold w-full border-b-2 border-gray-500 mt-4"
+            >
+                HTTP Methods
+            </h2>
+            <div class="mx-4">
+                <h3 class="text-xl">Quiz</h3>
+                <div>Get all quizzes</div>
+                <div class="bg-green-200 w-1/2">
+                    <span class="font-semibold">GET</span>
+                    <span class="mx-4"
+                        >http://api-qquizzes-b24b27944f64.herokuapp.com/api/quizzes</span
+                    >
+                </div>
+                <div>Response Example: </div>
+                <div class="bg-gray-800 text-white">
+                    { "_id": { "$oid": "64daa6e1ce1f19ff64267f69" }, "quizName":
+                    "World geography", "topic": "Geography", "level": "Basic",
+                    "userId": "64da940e4aa4a9b615a4ed76", "__v": 0, "quantity":
+                    20, "timeLimit": 600, "totalPoints": 20, "updatedAt": {
+                    "$date": "2024-03-01T06:06:40.402Z" }, "numberOfPlays": 2 }
+                </div>
+            </div>
+        </main>
+
+        <script src=""></script>
+    </body>
+</html>
