@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Quiz from "../models/quiz";
+import Player from "../models/player";
 import { IQuiz } from "../interfaces/db_interfaces";
 import { Types } from "mongoose";
 
@@ -120,6 +121,24 @@ export const getPublicQuizzes = async (req: Request, res: Response) => {
         return res.status(500).json({ message: "Something went wrong." });
     }
 };
+
+export const getQuizzesParticipated = async (req: Request, res: Response) => {
+    const userId = req.userId;
+    try {
+        const foundPlayers = await Player.find({ userId: userId });
+        const quizIdList = foundPlayers.map(
+            (player) => player.quizParticipated
+        );
+        const quizzesParticipated = await Quiz.find({
+            _id: { $in: quizIdList },
+        });
+        return res.status(200).json(quizzesParticipated);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Something went wrong." });
+    }
+};
+
 //update a quiz
 export const updateQuiz = async (req: Request, res: Response) => {
     const userId = req.userId;

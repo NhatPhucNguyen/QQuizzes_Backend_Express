@@ -9,6 +9,7 @@ import cors from "cors";
 import quizRouter from "./routes/quiz";
 import questionRouter from "./routes/question";
 import playerRouter from "./routes/player";
+import path from "path";
 const app: Express = express();
 //PORT config
 const PORT = process.env.PORT || 5000;
@@ -39,8 +40,15 @@ app.use("/api/auth", authRouter);
 app.use("/api/quizzes", quizRouter);
 app.use("/api/quizzes/:quizId/questions", questionRouter);
 app.use("/api/quizzes/:quizId/play", playerRouter);
+app.set("view engine", "ejs");
 app.get("/", (req, res) => {
-    res.redirect("https://github.com/NhatPhucNguyen/QQuizzes_Backend_Express");
+    res.sendStatus(200);
+});
+app.get("/api", (req, res) => {
+    res.sendStatus(200);
+});
+app.get("/document", (req, res) => {
+    res.sendFile(path.join(__dirname,"./index.html"));
 });
 //response errors other routes
 app.get("*", (req, res) => {

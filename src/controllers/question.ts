@@ -67,7 +67,9 @@ export const getAllQuestions = async (req: Request, res: Response) => {
         return res.status(404).json({ message: "Quiz Id is not valid" });
     }
     try {
-        const questions = await Question.find({ quizId: quizId });
+        const questions = await Question.find({ quizId: quizId }).sort({
+            questionNumber: 1,
+        });
         return res.status(200).json(questions);
     } catch (error) {
         console.log(error);
@@ -78,8 +80,13 @@ export const getAllQuestions = async (req: Request, res: Response) => {
 //update question
 export const updateQuestion = async (req: Request, res: Response) => {
     const { quizId, questionId } = req.params;
-    if (!Types.ObjectId.isValid(quizId) || !Types.ObjectId.isValid(questionId)) {
-        return res.status(404).json({ message: "Quiz or question Id is not valid" });
+    if (
+        !Types.ObjectId.isValid(quizId) ||
+        !Types.ObjectId.isValid(questionId)
+    ) {
+        return res
+            .status(404)
+            .json({ message: "Quiz or question Id is not valid" });
     }
     const questionToUpdate = req.body as IQuestion;
     if (
@@ -120,12 +127,10 @@ export const updateQuestion = async (req: Request, res: Response) => {
         //save updated document
         const updatedQuestion = await Question.findByIdAndUpdate(questionId, {
             ...questionToUpdate,
-        });        
+        });
         if (updatedQuestion) {
             await quizUpdater(quizId);
-            return res
-                .status(200)
-                .json(updatedQuestion);
+            return res.status(200).json(updatedQuestion);
         }
     } catch (error) {
         console.log(error);
@@ -136,8 +141,13 @@ export const updateQuestion = async (req: Request, res: Response) => {
 //delete question
 export const deleteQuestion = async (req: Request, res: Response) => {
     const { quizId, questionId } = req.params;
-    if (!Types.ObjectId.isValid(quizId) || !Types.ObjectId.isValid(questionId)) {
-        return res.status(404).json({ message: "Quiz or question Id is not valid" });
+    if (
+        !Types.ObjectId.isValid(quizId) ||
+        !Types.ObjectId.isValid(questionId)
+    ) {
+        return res
+            .status(404)
+            .json({ message: "Quiz or question Id is not valid" });
     }
     try {
         if (!res.locals.isOwner) {
@@ -160,9 +170,7 @@ export const deleteQuestion = async (req: Request, res: Response) => {
         );
         await Quiz.findByIdAndUpdate(quizId, { $inc: { quantity: -1 } });
         await quizUpdater(quizId);
-        return res
-            .status(200)
-            .json(deletedQuestion);
+        return res.status(200).json(deletedQuestion);
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Something went wrong" });
