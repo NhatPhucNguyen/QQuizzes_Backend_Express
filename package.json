@@ -4,7 +4,7 @@
     "description": "",
     "main": "app.js",
     "scripts": {
-        "test": "jest --detectOpenHandles --watch",
+        "test": "jest --detectOpenHandles --watchAll",
         "build": "rimraf ./dist && tsc",
         "start": "node ./dist/app.js",
         "dev": "nodemon ./src/app.ts",
