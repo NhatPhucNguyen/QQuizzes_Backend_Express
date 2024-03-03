@@ -9,7 +9,7 @@
         <script src="https://cdn.tailwindcss.com"></script>
     </head>
     <body>
-        <main class="px-4 w-full">
+        <main class="px-4 w-full py-4">
             <h1 class="text-4xl font-semi-bold">QQuizzes API Document</h1>
             <h2
                 class="text-2xl font-bold w-full border-b-2 border-gray-500 mt-4"
@@ -37,28 +37,173 @@
             <h2
                 class="text-2xl font-bold w-full border-b-2 border-gray-500 mt-4"
             >
-                HTTP Methods
+                API Call
             </h2>
             <div class="mx-4">
-                <h3 class="text-xl">Quiz</h3>
-                <div>Get all quizzes</div>
-                <div class="bg-green-200 w-1/2">
+                <h3 class="text-2xl font-bold">Authentication</h3>
+                <h4 class="mt-1 font-bold">Register</h4>
+                <div class="bg-yellow-200 p-2">
+                    <span class="font-semibold">POST</span>
+                    <span class="mx-4"
+                        >http://api-qquizzes-b24b27944f64.herokuapp.com/api/auth/register</span
+                    >
+                </div>
+                <div class="mx-4">
+                    <h5>- Request Body:</h5>
+                    <ul class="list-disc mx-4">
+                        <li>username: String (required) - Username of the user.</li>
+                        <li>password: String (required) - Password of the user.</li>
+                        <li>email: String (required) - Email of the user.</li>
+                    </ul>
+                </div>
+                <h4 class="mt-1 font-bold">Login</h4>
+                <div class="bg-yellow-200 p-2">
+                    <span class="font-semibold">POST</span>
+                    <span class="mx-4"
+                        >http://api-qquizzes-b24b27944f64.herokuapp.com/api/auth/login</span
+                    >
+                </div>
+                <div class="mx-4">
+                    <h5>- Request Body:</h5>
+                    <ul class="list-disc mx-4">
+                        <li>username: String (required) - Username of the user.</li>
+                        <li>password: String (required) - Password of the user.</li>
+                    </ul>
+                </div>
+                <h4 class="mt-1 font-bold">Refresh Token</h4>
+                <div class="bg-green-200 p-2">
                     <span class="font-semibold">GET</span>
+                    <span class="mx-4"
+                        >http://api-qquizzes-b24b27944f64.herokuapp.com/api/auth/refreshToken</span
+                    >
+                </div>
+                <h4 class="mt-1 font-bold">Logout</h4>
+                <div class="bg-green-200 p-2">
+                    <span class="font-semibold">GET</span>
+                    <span class="mx-4"
+                        >http://api-qquizzes-b24b27944f64.herokuapp.com/api/auth/logout</span
+                    >
+                </div>
+            </div>
+            <div class="mx-4 mt-6">
+                <h3 class="text-2xl font-bold">Quiz</h3>
+                <h4 class="mt-1 font-bold">Get owned quizzes</h4>
+                <div class="bg-green-200 p-2">
+                    <span class="font-semibold">GET</span>
+                    <span class="mx-4"
+                        >http://api-qquizzes-b24b27944f64.herokuapp.com/api/quizzes/admin</span
+                    >
+                </div>
+                <h4 class="mt-1 font-bold">Get public quizzes</h4>
+                <div class="bg-green-200 p-2">
+                    <span class="font-semibold">GET</span>
+                    <span class="mx-4"
+                        >http://api-qquizzes-b24b27944f64.herokuapp.com/api/quizzes/public</span
+                    >
+                </div>
+                <h4 class="mt-1 font-bold">Get quizzes participated</h4>
+                <div class="bg-green-200 p-2">
+                    <span class="font-semibold">GET</span>
+                    <span class="mx-4"
+                        >http://api-qquizzes-b24b27944f64.herokuapp.com/api/quizzes/admin/quizzesParticipated</span
+                    >
+                </div>
+                <h4 class="mt-1 font-bold">Get quiz by id</h4>
+                <div class="bg-green-200 p-2">
+                    <span class="font-semibold">GET</span>
+                    <span class="mx-4"
+                        >http://api-qquizzes-b24b27944f64.herokuapp.com/api/quizzes/{id}</span
+                    >
+                </div>
+                <h4 class="mt-1 font-bold">Create a quiz</h4>
+                <div class="bg-yellow-200 p-2">
+                    <span class="font-semibold">POST</span>
                     <span class="mx-4"
                         >http://api-qquizzes-b24b27944f64.herokuapp.com/api/quizzes</span
                     >
                 </div>
-                <div>Response Example: </div>
-                <div class="bg-gray-800 text-white">
-                    { "_id": { "$oid": "64daa6e1ce1f19ff64267f69" }, "quizName":
-                    "World geography", "topic": "Geography", "level": "Basic",
-                    "userId": "64da940e4aa4a9b615a4ed76", "__v": 0, "quantity":
-                    20, "timeLimit": 600, "totalPoints": 20, "updatedAt": {
-                    "$date": "2024-03-01T06:06:40.402Z" }, "numberOfPlays": 2 }
+                <div class="mx-4">
+                    <h5>- Request Body:</h5>
+                    <ul class="list-disc mx-4">
+                        <li>quizName: String (required) - Name of the quiz.</li>
+                        <li>topic: String (required) - Topic of the quiz.</li>
+                        <li>Other optional fields specific to your application.</li>
+                    </ul>
+                </div>
+                <h4 class="mt-1 font-bold">Update a quiz</h4>
+                <div class="bg-blue-200 p-2">
+                    <span class="font-semibold">PUT</span>
+                    <span class="mx-4"
+                        >http://api-qquizzes-b24b27944f64.herokuapp.com/api/quizzes/{id}</span
+                    >
+                </div>
+                <div class="mx-4">
+                    <h5>- Request Body:</h5>
+                    <ul class="list-disc mx-4">
+                        <li>Same as create quiz endpoint.</li>
+                    </ul>
+                </div>
+                <h4 class="mt-1 font-bold">Delete a quiz</h4>
+                <div class="bg-red-200 p-2">
+                    <span class="font-semibold">DELETE</span>
+                    <span class="mx-4"
+                        >http://api-qquizzes-b24b27944f64.herokuapp.com/api/quizzes/{id}</span
+                    >
+                </div>
+            </div>
+            <div class="mx-4 mt-6">
+                <h3 class="text-2xl font-bold">Question</h3>
+                <h4 class="mt-1 font-bold">Get all questions from a quiz</h4>
+                <div class="bg-green-200 p-2">
+                    <span class="font-semibold">GET</span>
+                    <span class="mx-4"
+                        >http://api-qquizzes-b24b27944f64.herokuapp.com/api/quizzes/{quizId}/questions</span
+                    >
+                </div>
+                <h4 class="mt-1 font-bold">Get all questions from a quiz which created by user</h4>
+                <div class="bg-green-200 p-2">
+                    <span class="font-semibold">GET</span>
+                    <span class="mx-4"
+                        >http://api-qquizzes-b24b27944f64.herokuapp.com/api/quizzes/{quizId}/questions/private</span
+                    >
+                </div>
+                <h4 class="mt-1 font-bold">Create a question</h4>
+                <div class="bg-yellow-200 p-2">
+                    <span class="font-semibold">POST</span>
+                    <span class="mx-4"
+                        >http://api-qquizzes-b24b27944f64.herokuapp.com/api/quizzes/{quizId}/questions</span
+                    >
+                </div>
+                <div class="mx-4">
+                    <h5>- Request Body:</h5>
+                    <ul class="list-disc mx-4">
+                        <li>question: String (required) - The question text.</li>
+                        <li>selections: Array (required) - Array of selections with at least 4 items.</li>
+                        <li>Other optional fields specific to your application.</li>
+                    </ul>
+                </div>
+                <h4 class="mt-1 font-bold">Update a question</h4>
+                <div class="bg-blue-200 p-2">
+                    <span class="font-semibold">PUT</span>
+                    <span class="mx-4"
+                        >http://api-qquizzes-b24b27944f64.herokuapp.com/api/quizzes/{quizId}/questions/{id}</span
+                    >
+                </div>
+                <div class="mx-4">
+                    <h5>- Request Body:</h5>
+                    <ul class="list-disc mx-4">
+                        <li>Same as create question endpoint.</li>
+                    </ul>
+                </div>
+                <h4 class="mt-1 font-bold">Delete a quiz</h4>
+                <div class="bg-red-200 p-2">
+                    <span class="font-semibold">DELETE</span>
+                    <span class="mx-4"
+                        >http://api-qquizzes-b24b27944f64.herokuapp.com/api/quizzes/{quizId}/questions/{id}</span
+                    >
                 </div>
             </div>
         </main>
-
         <script src=""></script>
     </body>
 </html>
