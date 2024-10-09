@@ -18,7 +18,7 @@ export const userPlay = async (req: Request, res: Response) => {
         }
         //to check if user are previewing this quiz
         if (res.locals.isOwner) {
-            return res.status(200).json({ message: "Previewing" });
+            return res.status(200).json({ isPreviewing:true });
         }
         const foundPlayer = await Player.findOne({
             $and: [{ userId: userId }, { quizParticipated: quizId }],

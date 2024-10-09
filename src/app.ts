@@ -10,6 +10,9 @@ import quizRouter from "./routes/quiz";
 import questionRouter from "./routes/question";
 import playerRouter from "./routes/player";
 import path from "path";
+import http from "http"
+import { Server } from "socket.io";
+import { questionHandlers } from "./services/socket/questionHandlers";
 const app: Express = express();
 //PORT config
 const PORT = process.env.PORT || 5000;
@@ -55,6 +58,19 @@ app.get("*", (req, res) => {
     res.status(404).json({ message: "URL not found." });
 });
 
+//create socket server
+const server = http.createServer(app);
+const io = new Server(server,{
+    cors:{
+        origin:true
+    },
+});
+io.on("connection",async (socket) => {
+    console.log("user connected !");
+    await questionHandlers(socket);
+})
+//run socket server
+io.listen(4999);
 //Run server
 app.listen(PORT, () => {
     console.log("Sever is listening on port:", PORT);

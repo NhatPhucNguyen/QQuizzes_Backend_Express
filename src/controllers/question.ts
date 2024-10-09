@@ -70,6 +70,20 @@ export const getAllQuestions = async (req: Request, res: Response) => {
         const questions = await Question.find({ quizId: quizId }).sort({
             questionNumber: 1,
         });
+        //prevent return answer if user is not creator of quiz
+        if (!res.locals.isOwner) {
+            const publicQuestions = questions.map((question) => {
+                const publicSelections = question.selections.map((item) => {
+                    if (item.isTrue) {
+                        return { ...item, isTrue: undefined };
+                    }
+                    return item;
+                });
+                question.selections = publicSelections;
+                return question;
+            });
+            return res.status(200).json(publicQuestions);
+        }
         return res.status(200).json(questions);
     } catch (error) {
         console.log(error);
@@ -176,3 +190,10 @@ export const deleteQuestion = async (req: Request, res: Response) => {
         return res.status(500).json({ message: "Something went wrong" });
     }
 };
+//socket event handler
+export const checkingAnswer = async (questionId:string,selection:ISelection) => {
+    const foundQuestion = await Question.findById(questionId);
+    if(!foundQuestion){
+        
+    }
+}
