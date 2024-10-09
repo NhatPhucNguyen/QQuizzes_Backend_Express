@@ -69,11 +69,10 @@ io.on("connection",async (socket) => {
     console.log("user connected !");
     await questionHandlers(socket);
 })
-//run socket server
-server.listen(4999);
 //Run server
-app.listen(PORT, () => {
-    console.log("Sever is listening on port:", PORT);
-});
+server.listen(PORT || 5000);
+// app.listen(PORT, () => {
+//     console.log("Sever is listening on port:", PORT);
+// });
 
 export default app;
