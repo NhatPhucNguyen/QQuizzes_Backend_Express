@@ -70,7 +70,7 @@ io.on("connection",async (socket) => {
     await questionHandlers(socket);
 })
 //run socket server
-io.listen(4999);
+server.listen(4999);
 //Run server
 app.listen(PORT, () => {
     console.log("Sever is listening on port:", PORT);
